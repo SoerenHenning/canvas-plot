@@ -38,7 +38,11 @@ $(document).ready(function() {
   setInterval(function() {
     lastValue += ((Math.random() * 20) - 10);
     var newDataPoint = [new Date(), lastValue];
-  	plot.addDataPoint("ds", newDataPoint, true, true);
+  	plot.addDataPoint("ds", newDataPoint, false, true);
+    var currentXDomain = plot.getXDomain();
+    var calculatedXDomain = plot.calculateXDomain();
+    calculatedXDomain[0] = Math.max(calculatedXDomain[1] - 60000, calculatedXDomain[0]);
+    plot.updateDomains(calculatedXDomain, plot.calculateYDomain(), true);
   }, 100);
 
 });

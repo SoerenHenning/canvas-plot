@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CanvasPlot Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="canvasplot.css">
+  <script src="dep/demo/jquery-2.2.3.min.js" charset="utf-8"></script>
+  <script src="dep/canvasplot/d3.min.js" charset="utf-8"></script>
+  <script src="canvasplot.js" charset="utf-8"></script>
+  <script src="canvasplot-indicator-ts.js" charset="utf-8"></script>
+</head>
+<body>
+<div>
+  <input type="file" id="file" name="file" />
+</div>
+<div id="maincontainer">
+
+</div>
+
+<script type="text/javascript">
+function getDemoPlotSize() {
+	return [window.innerWidth-100, Math.round(0.45*(window.innerWidth-100))];
+}
+
+$(document).ready(function() {
+
+  var measurementsPlot = new CanvasTimeSeriesIndicatorPlot(d3.select("#maincontainer"), [getDemoPlotSize()[0], 300], {
+    yAxisLabel: "Measurement",
+    updateViewCallback: setViews
+  });
+  var anomalyscoresPlot = new CanvasTimeSeriesPlot(d3.select("#maincontainer"), [getDemoPlotSize()[0], 100], {
+    yAxisLabel: "Anomaly Score",
+    updateViewCallback: setViews
+  });
+  measurementsPlot.setZoomYAxis(false);
+  anomalyscoresPlot.setZoomYAxis(false);
+  anomalyscoresPlot.updateDomains(measurementsPlot.getXDomain(), [0, 1], false);
+
+  function plotDataSets(dataSets) {
+    measurementsPlot.removeDataSet("measurements");
+    measurementsPlot.removeDataSet("predictions");
+    anomalyscoresPlot.removeDataSet("anomalyscores");
+
+    var measurements = [];
+    var predictions = [];
+    var anomalyscores = [];
+    var anomalystates = [];
+
+    $.each(dataSets, function(key, value) {
+      measurements.push([value.time, value.measurement]);
+      predictions.push([value.time, value.prediction]);
+      anomalyscores.push([value.time, value.anomalyscore]);
+    });
+
+    measurementsPlot.addDataSet("measurements", "Measurement", measurements, "orange", true, true);
+    measurementsPlot.addDataSet("predictions", "Prediction", predictions, "steelblue", true, true);
+    anomalyscoresPlot.addDataSet("anomalyscores", "Anomaly Score", anomalyscores, "red", true, true);
+    anomalyscoresPlot.updateDomains(measurementsPlot.getXDomain(), [0, 1], false);
+
+  }
+
+  function setViews(except, xDomain, yDomain) {
+    var plots = [measurementsPlot, anomalyscoresPlot];
+
+    $.each(plots, function(key, plot) {
+      if (plot != except) {
+        plot.updateDomains(xDomain, plot.getYDomain(), false);
+      }
+    });
+  }
+
+  $('#file').change(function(evt) {
+    var file = evt.target.files[0];
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var dataSets = $.parseJSON(e.target.result);
+        plotDataSets(dataSets);
+    };
+    reader.readAsText(file);
+  });
+
+});
+</script>
+</body>
+</html>

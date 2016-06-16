@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CanvasPlot Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="canvasplot.css">
+  <script src="dep/demo/jquery-2.2.3.min.js" charset="utf-8"></script>
+  <script src="dep/canvasplot/d3.min.js" charset="utf-8"></script>
+  <script src="canvasplot.js" charset="utf-8"></script>
+</head>
+<body>
+<div>
+  <input type="file" id="file" name="file" />
+</div>
+<div id="maincontainer">
+
+</div>
+
+<script type="text/javascript">
+function getDemoPlotSize() {
+	return [window.innerWidth-100, Math.round(0.45*(window.innerWidth-100))];
+}
+
+$(document).ready(function() {
+
+	var tsPlotGroup = new CanvasDataPlotGroup(d3.select("#maincontainer"), [getDemoPlotSize()[0], 300], true, true, {});
+  tsPlotGroup.setZoomYAxis(true);
+	tsPlotGroup.setSyncViews(true, true, true);
+
+  function plotDataSets(dataSets) {
+    tsPlotGroup.removeDataSet("measurements");
+    tsPlotGroup.removeDataSet("predictions");
+    tsPlotGroup.removeDataSet("anomalyscores");
+
+    var measurements = [];
+    var predictions = [];
+    var anomalyscores = [];
+
+    $.each(dataSets, function(key, value) {
+      measurements.push([value.time, value.measurement]);
+      predictions.push([value.time, value.prediction]);
+      anomalyscores.push([value.time, value.anomalyscore * 3500]);
+    });
+
+    tsPlotGroup.addDataSet("CanvasTimeSeriesPlot", "measurements", "Measurement", measurements, "orange", {
+      yAxisLabel: "Measurement"
+    });
+    tsPlotGroup.addDataSet("CanvasTimeSeriesPlot", "predictions", "Prediction", predictions, "steelblue", {
+      yAxisLabel: "Prediction",
+    });
+    tsPlotGroup.addDataSet("CanvasTimeSeriesPlot", "anomalyscores", "Anomaly Score", anomalyscores, "red", {
+      yAxisLabel: "Anomaly Score",
+    });
+
+    tsPlotGroup.fitDataInViews();
+
+  }
+
+  $('#file').change(function(evt) {
+    var file = evt.target.files[0];
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var dataSets = $.parseJSON(e.target.result);
+        plotDataSets(dataSets);
+    };
+    reader.readAsText(file);
+  });
+
+});
+</script>
+</body>
+</html>
