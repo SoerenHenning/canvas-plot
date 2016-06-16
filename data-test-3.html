@@ -51,10 +51,14 @@ $(document).ready(function() {
       measurements.push([value.time, value.measurement]);
       predictions.push([value.time, value.prediction]);
       anomalyscores.push([value.time, value.anomalyscore]);
+      if (value.anomalyscore > 0.2) {
+        anomalystates.push(value.time);
+      }
     });
 
     measurementsPlot.addDataSet("measurements", "Measurement", measurements, "orange", true, true);
     measurementsPlot.addDataSet("predictions", "Prediction", predictions, "steelblue", true, true);
+    measurementsPlot.setIndicatorData("bla", "Anomaly State", anomalystates, "bla", true, true);
     anomalyscoresPlot.addDataSet("anomalyscores", "Anomaly Score", anomalyscores, "red", true, true);
     anomalyscoresPlot.updateDomains(measurementsPlot.getXDomain(), [0, 1], false);
 
