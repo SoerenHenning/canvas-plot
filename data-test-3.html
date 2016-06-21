@@ -37,6 +37,7 @@ $(document).ready(function() {
   anomalyscoresPlot.setZoomYAxis(false);
   anomalyscoresPlot.updateDomains(measurementsPlot.getXDomain(), [0, 1], false);
 
+  //TODO rename
   function plotDataSets(dataSets) {
     measurementsPlot.removeDataSet("measurements");
     measurementsPlot.removeDataSet("predictions");
@@ -83,6 +84,38 @@ $(document).ready(function() {
     };
     reader.readAsText(file);
   });
+
+  setInterval(requestNewData, 1000);
+
+  function requestNewData() {
+    addMeasurements([{"time": new Date().getTime(), "measurement": 2500, "prediction": 3000, "anomalyscore": 0.75}]);
+  }
+
+  function addMeasurements(measurementsSet) {
+
+    var beforeCalculatedXDomain = measurementsPlot.calculateXDomain();
+    var beforeActualXDomain = measurementsPlot.getXDomain();
+
+    $.each(measurementsSet, function(key, value) {
+      measurementsPlot.addDataPoint("measurements", [value.time, value.measurement], false, true);
+      measurementsPlot.addDataPoint("predictions", [value.time, value.prediction], false, true);
+      //measurementsPlot.addIndicatorData("bla", "Anomaly State", anomalystates, "bla", true, true);
+      anomalyscoresPlot.addDataPoint("anomalyscores", [value.time, value.anomalyscore], false, true);
+    });
+
+    var afterCalculatedXDomain = measurementsPlot.calculateXDomain();
+    var afterActualXDomain = measurementsPlot.getXDomain();
+
+    if (beforeCalculatedXDomain[1] <= beforeActualXDomain[1] && afterCalculatedXDomain[1] > afterActualXDomain[1]) {
+      var shifting = afterCalculatedXDomain[1] - beforeCalculatedXDomain[1];
+      var xDomain = [measurementsPlot.getXDomain()[0]*1 + shifting  , measurementsPlot.getXDomain()[1]*1 + shifting];
+      measurementsPlot.updateDomains(xDomain, [0, measurementsPlot.calculateYDomain()[1]], false);
+      anomalyscoresPlot.updateDomains(measurementsPlot.getXDomain(), [0, 1], false);
+    }
+
+  }
+
+
 
 });
 </script>
