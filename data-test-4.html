@@ -87,10 +87,18 @@ $(document).ready(function() {
 
   plotDataSets([]);
 
-  //setInterval(requestNewData, 1000);
+  setInterval(requestNewData, 100);
 
   function requestNewData() {
-    addMeasurements([{"time": new Date().getTime(), "measurement": 2500, "prediction": 3000, "anomalyscore": 0.75}]);
+    $.ajax({
+      url: "http://localhost:8080/json",
+      method: "GET",
+      dataType: "json",
+      crossDomain: true, //TODO temp
+      success: function(data) {
+        addMeasurements(data);
+      }
+    });
   }
 
   function addMeasurements(measurementsSet) {
@@ -101,6 +109,7 @@ $(document).ready(function() {
     $.each(measurementsSet, function(key, value) {
       measurementsPlot.addDataPoint("measurements", [value.time, value.measurement], false, true);
       measurementsPlot.addDataPoint("predictions", [value.time, value.prediction], false, true);
+      //TODO
       //measurementsPlot.addIndicatorData("bla", "Anomaly State", anomalystates, "bla", true, true);
       anomalyscoresPlot.addDataPoint("anomalyscores", [value.time, value.anomalyscore], false, true);
     });
