@@ -85,10 +85,18 @@ $(document).ready(function() {
     reader.readAsText(file);
   });
 
-  //setInterval(requestNewData, 1000);
+  plotDataSets([{"time": new Date().getTime(), "measurement": 2500, "prediction": 3000, "anomalyscore": 0.75}]);
+  //measurementsPlot.addDataSet("measurements", "Measurement", [[0,0]], "orange", true, true);
+  //measurementsPlot.addDataSet("predictions", "Prediction", predictions, "steelblue", true, true);
+  //measurementsPlot.setIndicatorData("bla", "Anomaly State", anomalystates, "bla", true, true);
+  //anomalyscoresPlot.addDataSet("anomalyscores", "Anomaly Score", anomalyscores, "red", true, true);
+
+  setInterval(requestNewData, 1000);
 
   function requestNewData() {
-    addMeasurements([{"time": new Date().getTime(), "measurement": 2500, "prediction": 3000, "anomalyscore": 0.75}]);
+    addMeasurements([{"time": new Date().getTime(), "measurement": 2500 * Math.random(), "prediction": 3000 * Math.random(), "anomalyscore": 1 * Math.random()}]);
+    console.log()
+    //TODO
   }
 
   function addMeasurements(measurementsSet) {
@@ -99,6 +107,7 @@ $(document).ready(function() {
     $.each(measurementsSet, function(key, value) {
       measurementsPlot.addDataPoint("measurements", [value.time, value.measurement], false, true);
       measurementsPlot.addDataPoint("predictions", [value.time, value.prediction], false, true);
+      //TODO
       //measurementsPlot.addIndicatorData("bla", "Anomaly State", anomalystates, "bla", true, true);
       anomalyscoresPlot.addDataPoint("anomalyscores", [value.time, value.anomalyscore], false, true);
     });
