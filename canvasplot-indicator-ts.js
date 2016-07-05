@@ -9,7 +9,7 @@ function CanvasTimeSeriesIndicatorPlot(parentElement, canvasDimensions, config) 
 }
 CanvasTimeSeriesIndicatorPlot.prototype = Object.create(CanvasTimeSeriesPlot.prototype);
 
-CanvasTimeSeriesIndicatorPlot.prototype.setIndicatorData = function(uniqueID, label, dataSet, colorString, updateDomains, copyData) {
+CanvasTimeSeriesIndicatorPlot.prototype.setIndicatorDataSet = function(dataSet, updateDomains, copyData) {
 	dataSet = dataSet || [];
 	if(copyData) {
 		this.indicatorData = [];
@@ -30,7 +30,7 @@ CanvasTimeSeriesIndicatorPlot.prototype.setIndicatorData = function(uniqueID, la
 	}
 };
 
-CanvasTimeSeriesIndicatorPlot.prototype.addIndicatorDataPoint = function(uniqueID, dataPoint, updateDomains, copyData) {
+CanvasTimeSeriesIndicatorPlot.prototype.addIndicatorDataPoint = function(dataPoint, updateDomains, copyData) {
 	if (this.indicatorData.length > 0 && this.indicatorData[indicatorData.length-1][0] > dataPoint[0]) {
 		return;
 	}
