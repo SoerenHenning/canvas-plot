@@ -59,7 +59,7 @@ $(document).ready(function() {
 
     measurementsPlot.addDataSet("measurements", "Measurement", measurements, "orange", true, true);
     measurementsPlot.addDataSet("predictions", "Prediction", predictions, "steelblue", true, true);
-    measurementsPlot.setIndicatorData("bla", "Anomaly State", anomalystates, "bla", true, true);
+    measurementsPlot.setIndicatorDataSet(anomalystates, true, true);
     anomalyscoresPlot.addDataSet("anomalyscores", "Anomaly Score", anomalyscores, "red", true, true);
     anomalyscoresPlot.updateDomains(measurementsPlot.getXDomain(), [0, 1], false);
 
